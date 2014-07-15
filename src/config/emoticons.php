@@ -18,7 +18,7 @@ return array(
     'gah'           => array('D:', ':O', ':gah:'),
     'happy'         => array(':)', ':]', ':happy:'),
     'heart'         => array('&lt;3', ':heart:'),
-    'hm'            => array(':/', ':\\', ':hm:'),
+    'hm'            => array(':hm:'),
     'kiss'          => array(':kiss:'),
     'meh'           => array(':|', '-.-', '&lt;_&lt;', '&gt;_&gt;', ':meh:'),
     'mmf'           => array(':x', ':X', ':mmf:'),
