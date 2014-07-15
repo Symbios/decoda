@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -20,13 +20,9 @@ class UrlFilter extends AbstractFilter {
      * @type array
      */
     protected $_config = array(
-        'protocols' => array('http', 'https', 'ftp', 'irc', 'telnet')
+        'protocols' => array('http', 'https', 'ftp', 'irc', 'telnet'),
+        'defaultProtocol' => 'http'
     );
-    
-    /**
-     * Default protocol
-     */
-    protected $_defaultProtocol = 'http';
 
     /**
      * Supported tags.
@@ -46,34 +42,9 @@ class UrlFilter extends AbstractFilter {
             )
         ),
         'link' => array(
-            'htmlTag' => 'a',
-            'displayType' => Decoda::TYPE_INLINE,
-            'allowedTypes' => Decoda::TYPE_INLINE,
-            'attributes' => array(
-                'default' => true
-            ),
-            'mapAttributes' => array(
-                'default' => 'href'
-            )
+            'aliasFor' => 'url'
         )
     );
-    
-    /**
-     * Set default protocol 
-     *
-     * @param string $protocol
-     * @return boolean
-     */
-    public function setDefaultProtocol($protocol)
-    {
-        if(!preg_match('/^(' . implode('|', $this->getConfig('protocols')) . ')/i', $protocol ))
-        {
-            return false;
-        }
-        
-        $this->_defaultProtocol = strtolower($protocol);
-        return true;
-    }
 
     /**
      * Using shorthand variation if enabled.
@@ -85,15 +56,28 @@ class UrlFilter extends AbstractFilter {
     public function parse(array $tag, $content) {
         $url = isset($tag['attributes']['href']) ? $tag['attributes']['href'] : $content;
         $protocols = $this->getConfig('protocols');
-
+        $defaultProtocol = $this->getConfig('defaultProtocol');
         $hasProtocol = preg_match('/^(' . implode('|', $protocols) . ')/i', $url);
-        $url = (!$hasProtocol && filter_var($this->_defaultProtocol.'://'.$url, FILTER_VALIDATE_URL))?
-                $this->_defaultProtocol.'://'.$url :
-                $url;
 
-        // Return an invalid URL
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return $url;
+        if (!in_array($defaultProtocol, $protocols)) {
+            $defaultProtocol = 'http';
+        }
+
+        // Allow relative and absolute paths, else check protocols
+        if (!preg_match('/^(\.\.?)?\//', $url)) {
+            if (!$hasProtocol) {
+                // Only allow if no protocol exists, just not the ones not in the list
+                if (preg_match('/^(?![a-z]+:\/\/)/', $url) && filter_var($defaultProtocol . '://' . $url, FILTER_VALIDATE_URL)) {
+                    $url = $defaultProtocol . '://' . $url;
+                } else {
+                    return $url;
+                }
+            }
+
+            // Return an invalid URL
+            if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            }
         }
 
         $tag['attributes']['href'] = $url;

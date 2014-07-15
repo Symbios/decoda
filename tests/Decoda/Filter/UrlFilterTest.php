@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -40,11 +40,22 @@ class UrlFilterTest extends TestCase {
         // Invalid
         $this->assertEquals('http:domain.com', $this->object->reset('[url]http:domain.com[/url]')->parse());
         $this->assertEquals('file://image.png', $this->object->reset('[url]file://image.png[/url]')->parse());
+        $this->assertEquals('ssh://domain.com/some/url', $this->object->reset('[url="ssh://domain.com/some/url"]SSH[/url]')->parse());
 
         // Test URLs with a trailing slash
         $this->assertEquals('<a href="http://domain.com/">http://domain.com/</a>', $this->object->reset('[url]http://domain.com/[/url]')->parse());
         $this->assertEquals('<a href="http://domain.com/">Test</a>', $this->object->reset('[url="http://domain.com/"]Test[/url]')->parse());
 
+        // Allow URLs with missing protocol
+        $this->assertEquals('<a href="http://domain.com">domain.com</a>', $this->object->reset('[url]domain.com[/url]')->parse());
+        $this->assertEquals('<a href="http://www.domain.com">www.domain.com</a>', $this->object->reset('[url]www.domain.com[/url]')->parse());
+
+        // Allow relative and absolute paths
+        $this->assertEquals('<a href="/absolute/directory">/absolute/directory</a>', $this->object->reset('[url]/absolute/directory[/url]')->parse());
+        $this->assertEquals('<a href="./same/directory">./same/directory</a>', $this->object->reset('[url]./same/directory[/url]')->parse());
+        $this->assertEquals('<a href="../relative/directory">../relative/directory</a>', $this->object->reset('[url]../relative/directory[/url]')->parse());
+        $this->assertEquals('<a href="../../relative/again">../../relative/again</a>', $this->object->reset('[url]../../relative/again[/url]')->parse());
+        $this->assertEquals('.../invalid/relative', $this->object->reset('[url].../invalid/relative[/url]')->parse());
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -41,17 +41,7 @@ class ImageFilter extends AbstractFilter {
             )
         ),
         'image' => array(
-            'htmlTag' => 'img',
-            'displayType' => Decoda::TYPE_INLINE,
-            'allowedTypes' => Decoda::TYPE_NONE,
-            'contentPattern' => self::IMAGE_PATTERN,
-            'autoClose' => true,
-            'attributes' => array(
-                'default' => self::WIDTH_HEIGHT,
-                'width' => self::DIMENSION,
-                'height' => self::DIMENSION,
-                'alt' => self::WILDCARD
-            )
+            'aliasFor' => 'img'
         )
     );
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -179,6 +179,22 @@ class TestFilter extends AbstractFilter {
             'attributes' => array(
                 'foo' => self::WILDCARD,
                 'bar' => self::WILDCARD
+            )
+        ),
+
+        // Aliasing
+        'aliasBase' => array(
+            'htmlTag' => 'aliasBase',
+            'displayType' => Decoda::TYPE_BLOCK,
+            'attributes' => array(
+                'foo' => self::WILDCARD,
+                'bar' => self::WILDCARD
+            )
+        ),
+        'aliased' => array(
+            'aliasFor' => 'aliasBase',
+            'attributes' => array(
+                'baz' => self::NUMERIC
             )
         )
     );

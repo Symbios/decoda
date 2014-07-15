@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -677,6 +677,7 @@ class Decoda {
      */
     public function reset($string, $flush = false) {
         $this->_chunks = array();
+        $this->_errors = array();
         $this->_nodes = array();
         $this->_blacklist = array();
         $this->_whitelist = array();
@@ -741,6 +742,7 @@ class Decoda {
                 case 'locale':
                     $this->setLocale($value);
                 break;
+                case 'disable':
                 case 'disabled':
                     $this->disable($value);
                 break;
@@ -973,41 +975,37 @@ class Decoda {
      */
     protected function _buildTag($string) {
         $disabled = $this->getConfig('disabled');
-        $oe = $this->getConfig('open');
-        $ce = $this->getConfig('close');
+        $oe = preg_quote($this->getConfig('open'), '/');
+        $ce = preg_quote($this->getConfig('close'), '/');
         $tag = null;
         $type = self::TAG_NONE;
         $attributes = array();
 
         // Closing tag
-        if (mb_substr($string, 0, 2) === $oe . '/') {
-            $tag = trim(mb_substr($string, 2, mb_strlen($string) - 3));
+        if (preg_match('/^' . $oe . '\s*\/\s*([-a-z0-9\*]+)\s*' . $ce . '/i', $string, $matches)) {
+            $tag = trim($matches[1]);
             $type = self::TAG_CLOSE;
 
         // Opening tag
-        } else if (preg_match('/' . preg_quote($oe, '/') . '([-a-z0-9\*]+)(.*?)' . preg_quote($ce, '/') . '/i', $string, $matches)) {
+        } else if (preg_match('/^' . $oe . '\s*([-a-z0-9\*]+)(.*?)\s*' . $ce . '/i', $string, $matches)) {
             $tag = trim($matches[1]);
             $type = self::TAG_OPEN;
         }
 
         // Check for lowercase tag in case they uppercased it: IMG, B, etc
-        if (isset($this->_tags[mb_strtolower($tag)])) {
-            $tag = mb_strtolower($tag);
+        if (isset($this->_tags[strtolower($tag)])) {
+            $tag = strtolower($tag);
         }
 
         if (!isset($this->_tags[$tag])) {
             return false;
         }
 
+        $source = $this->_tags[$tag];
+
         // Check if is a self closing tag
-        if (self::TAG_OPEN === $type) {
-            if (
-                isset($this->_tags[$tag]['autoClose']) &&
-                $this->_tags[$tag]['autoClose'] &&
-                mb_substr($string, -2) === '/' . $ce
-            ) {
-                $type = self::TAG_SELF_CLOSE;
-            }
+        if ($type === self::TAG_OPEN && $source['autoClose'] && preg_match('/\/\s*' . $ce . '$/', $string)) {
+            $type = self::TAG_SELF_CLOSE;
         }
 
         // Find attributes
@@ -1024,7 +1022,7 @@ class Decoda {
 
             // Find attributes that aren't surrounded by quotes
             if (!$this->getConfig('strictMode')) {
-                preg_match_all('/([a-z]+)=([^\s' . preg_quote($ce, '/') . ']+)/i', $string, $matches, PREG_SET_ORDER);
+                preg_match_all('/([a-z]+)=([^\s' . $ce . ']+)/i', $string, $matches, PREG_SET_ORDER);
 
                 if ($matches) {
                     foreach ($matches as $match) {
@@ -1036,8 +1034,6 @@ class Decoda {
             }
 
             if ($found) {
-                $source = $this->_tags[$tag];
-
                 foreach ($found as $key => $value) {
                     $key = mb_strtolower($key);
                     $value = trim(trim($value), '"');
@@ -1374,9 +1370,10 @@ class Decoda {
      *
      * @param array $chunks
      * @param array $wrapper
+     * @param int $depth
      * @return array
      */
-    protected function _extractNodes(array $chunks, array $wrapper = array()) {
+    protected function _extractNodes(array $chunks, array $wrapper = array(), $depth = 0) {
         $chunks = $this->_cleanChunks($chunks, $wrapper);
         $nodes = array();
         $tag = array();
@@ -1420,7 +1417,8 @@ class Decoda {
 
                     // Slice a section of the array if the correct closing tag is found
                     $node = $chunks[$openIndex];
-                    $node['children'] = $this->_extractNodes(array_slice($chunks, ($openIndex + 1), $index), $chunks[$openIndex]);
+                    $node['depth'] = $depth;
+                    $node['children'] = $this->_extractNodes(array_slice($chunks, ($openIndex + 1), $index), $chunks[$openIndex], $depth + 1);
                     $nodes[] = $node;
 
                 // There is no opening or a broken opening tag, which means
@@ -1559,7 +1557,7 @@ class Decoda {
             }
         }
 
-        return trim($parsed);
+        return $this->_trim($parsed);
     }
 
     /**
@@ -1588,7 +1586,7 @@ class Decoda {
             }
         }
 
-        return trim($parsed);
+        return $this->_trim($parsed);
     }
 
     /**
@@ -1612,6 +1610,16 @@ class Decoda {
         }
 
         return $content;
+    }
+
+    /**
+     * Trim line breaks and not spaces.
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function _trim($string) {
+        return trim($string, "\t\n\r\0\x0B");
     }
 
 }

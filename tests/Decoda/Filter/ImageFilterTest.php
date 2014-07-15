@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -26,6 +26,7 @@ class ImageFilterTest extends TestCase {
      */
     public function testImg() {
         $this->assertEquals('<img src="http://domain.com/image.gif" alt="">', $this->object->reset('[img]http://domain.com/image.gif[/img]')->parse());
+        $this->assertEquals('<img src="http://domain.com/image.gif" alt="">', $this->object->reset('[image]http://domain.com/image.gif[/image]')->parse());
 
         // variations
         $this->assertEquals('<img src="https://domain.com/image.jpg" alt="">', $this->object->reset('[img]https://domain.com/image.jpg[/img]')->parse()); // https, jpg

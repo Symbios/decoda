@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright   2006-2013, Miles Johnson - http://milesj.me
+ * @copyright   2006-2014, Miles Johnson - http://milesj.me
  * @license     https://github.com/milesj/decoda/blob/master/license.md
  * @link        http://milesj.me/code/php/decoda
  */
@@ -11,6 +11,14 @@ namespace Decoda;
  * Defines the methods for all Filters to implement.
  */
 interface Filter extends Component {
+
+    /**
+     * Regex patterns for attribute parsing.
+     */
+    const WILDCARD = '/(.*?)/';
+    const ALPHA = '/^[a-z_\-\s]+$/i';
+    const ALNUM = '/^[a-z0-9,_\s\.\-\+\/]+$/i';
+    const NUMERIC = '/^[0-9,\.\-\+\/]+$/';
 
     /**
      * Return a tag if it exists, and merge with defaults.
