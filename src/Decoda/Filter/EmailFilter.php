@@ -60,7 +60,7 @@ class EmailFilter extends AbstractFilter {
         }
 
         // Return an invalid email
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('#\.html?#i', $email)) {
             return $content;
         }
 
