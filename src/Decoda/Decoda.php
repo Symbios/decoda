@@ -1619,7 +1619,7 @@ class Decoda {
      * @return string
      */
     protected function _trim($string) {
-        return trim($string, "\t\n\r\0\x0B");
+        return trim($string, "\t\0\x0B");
     }
 
 }
