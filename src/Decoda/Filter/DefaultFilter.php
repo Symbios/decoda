@@ -31,12 +31,12 @@ class DefaultFilter extends AbstractFilter {
      */
     protected $_tags = array(
         'b' => array(
-            'htmlTag' => array('b', 'strong'),
+            'htmlTag' => array('strong', 'b'),
             'displayType' => Decoda::TYPE_INLINE,
             'allowedTypes' => Decoda::TYPE_INLINE
         ),
         'i' => array(
-            'htmlTag' => array('i', 'em'),
+            'htmlTag' => array('em', 'i' ),
             'displayType' => Decoda::TYPE_INLINE,
             'allowedTypes' => Decoda::TYPE_INLINE
         ),
