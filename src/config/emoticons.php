@@ -12,7 +12,7 @@
 return array(
     'angry'         => array('&gt;(', '&gt;:(', '&gt;[', '&gt;:[', ':angry:'),
     'aw'            => array(':aw:'),
-    'cool'          => array('8)', '8]', ':cool:'),
+    'cool'          => array('8]', ':cool:'),
     'ecstatic'      => array(':D', '8D', ':ecstatic:'),
     'furious'       => array('&gt;:D', '&gt;&lt;', ':furious:'),
     'gah'           => array('D:', ':O', ':gah:'),
@@ -22,7 +22,7 @@ return array(
     'kiss'          => array(':kiss:'),
     'meh'           => array(':|', '-.-', '&lt;_&lt;', '&gt;_&gt;', ':meh:'),
     'mmf'           => array(':x', ':X', ':mmf:'),
-    'sad'           => array(':(', ':[', ';(', ';[', ':\'(', ':\'[', ';\'(', ';\'[', ':sad:'),
+    'sad'           => array(':(', ';(', ':\'(', ':\'[', ';\'(', ';\'[', ':sad:'),
     'tongue'        => array(':P', ':p', ':tongue:'),
     'what'          => array(':o', ':?', ':what:'),
     'wink'          => array(';)', ';]', ';D', ':wink:'),
