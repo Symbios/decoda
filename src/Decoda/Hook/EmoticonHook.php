@@ -161,10 +161,9 @@ class EmoticonHook extends AbstractHook {
     
     public function getSmileyPath($smiley) {
         foreach((array)$this->getConfig('extension') as $extension) {
-            $path = sprintf('%s%s.%s',
+            $path = sprintf('%s%s',
                     $this->getConfig('path'),
-                    $this->_smilies[$smiley],
-                    $extension);
+                    $this->_smilies[$smiley]);
             if( $this->emoticonExists( $path ) ) {
                 return $path;
             }
