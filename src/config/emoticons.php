@@ -27,7 +27,7 @@ return array(
     'ecstatic.png'      => array('8D', ':ecstatic:'),
     'furious.png'       => array('&gt;:D', '&gt;&lt;', ':furious:'),
     'gah.png'           => array('D:', ':O', ':gah:'),
-    'happy.png'         => array(':)', ':]', ':happy:'),
+    'happy.png'         => array(':]', ':happy:'),
     'heart.png'         => array('&lt;3', ':heart:'),
     'hm.png'            => array(':hm:'),
     'kiss.gif'          => array(':kiss:'),
